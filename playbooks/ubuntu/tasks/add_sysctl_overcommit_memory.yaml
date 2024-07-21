@@ -1,0 +1,13 @@
+- name: Проверить, есть ли запись в /etc/sysctl.conf
+  command: grep -q '^vm.overcommit_memory = 1$' /etc/sysctl.conf
+  register: overcommit_check
+  ignore_errors: true
+
+- name: Добавить запись в /etc/sysctl.conf, если её нет
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: 'vm.overcommit_memory = 1'
+  when: overcommit_check.rc != 0
+
+- name: Перезапустим sysctl
+  command: sysctl -p

@@ -1,0 +1,11 @@
+- name: Установить redis
+  apt:
+    name: redis-server
+    state: present
+
+- name: Проверить версию redis
+  shell: redis-server --version
+  register: redis_version
+
+- debug:
+    msg: "Версия redis: {{ redis_version.stdout }}"

@@ -1,0 +1,16 @@
+- name: Установка пакетов для frappe
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - xvfb
+    - libfontconfig
+    - wkhtmltopdf
+
+- name: Проверить версию pip
+  shell: wkhtmltopdf --version
+  register: wkhtmltopdf_version
+
+- debug:
+    msg: 
+    - "Версия wkhtmltopdf: {{ wkhtmltopdf_version.stdout }}"

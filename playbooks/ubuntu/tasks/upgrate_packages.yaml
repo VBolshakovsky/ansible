@@ -1,0 +1,14 @@
+- name: Обновить кэш пакетов
+  apt:
+    update_cache: yes
+  ignore_errors: true
+
+- name: Установить пакеты
+  command: apt-get upgrade -y
+  ignore_errors: true
+  register: apt_upgrade_result
+
+- name: Вывод информации о процессе обновления
+  debug:
+    msg: "Обновление пакетов: {{ item }}"
+  loop: "{{ apt_upgrade_result.stdout_lines }}"

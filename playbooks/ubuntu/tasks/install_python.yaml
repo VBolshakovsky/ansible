@@ -1,0 +1,34 @@
+- name: Установить python3 и его компоненты
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python3-dev
+    - python3-pip
+    - python3-venv
+
+# https://www.makeuseof.com/fix-pip-error-externally-managed-environment-linux/
+# - name: Удалить EXTERNALLY-MANAGED, чтобы можно было устанавливать пакеты глобально
+#   file:
+#     path: /usr/lib/python3.*/EXTERNALLY-MANAGED
+#     state: absent
+
+- name: Обновление pip
+  ignore_errors: true
+  pip:
+    name: pip
+    state: latest
+    # extra_args: "--break-system-packages"
+
+- name: Проверить версию python3
+  shell: python3 -V
+  register: python3_version
+
+- name: Проверить версию pip
+  shell: pip --version
+  register: pip_version
+
+- debug:
+    msg: 
+    - "Версия python3: {{ python3_version.stdout }}"
+    - "Версия pip: {{ pip_version.stdout }}"

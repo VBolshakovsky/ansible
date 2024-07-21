@@ -1,0 +1,10 @@
+- name: Установить для root возможность входа
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: 'PermitRootLogin yes'
+    regexp: '^#?PermitRootLogin.*$'
+    create: yes
+    backup: yes
+
+- name: Перезапустить ssh
+  shell: systemctl restart ssh || systemctl restart sshd

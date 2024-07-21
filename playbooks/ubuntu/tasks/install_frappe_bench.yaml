@@ -1,0 +1,16 @@
+- name: Установка bench
+  become: true
+  command: python3 -m pip install frappe-bench --break-system-packages
+  register: output
+  changed_when: false
+
+- name: Вывод команды
+  debug:
+    msg: "{{ output.stdout_lines }}"
+
+- name: Проверить версию bench
+  shell: bench --version
+  register: bench_version
+
+- debug:
+    msg: "Версия bench: {{ bench_version.stdout }}"

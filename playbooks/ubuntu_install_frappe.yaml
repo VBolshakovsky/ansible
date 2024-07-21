@@ -1,0 +1,61 @@
+# Добавить в /etc/ansible/hosts.yaml
+# Задать пароль root на целевой машине sudo passwd root
+# ansible-playbook ~/playbooks/ubuntu_install_frappe.yaml -v -u app --ask-pass --ask-become-pass
+
+- name: Playbook install frappe
+  vars_prompt:
+    - name: hosts
+      prompt: "Введите hosts"
+      private: no
+    - name: bench_folder
+      prompt: "Введите название директории frappe"
+      default: "frappe-bench"
+      private: no
+    - name: nvm_v
+      prompt: "Версия nvm"
+      default: "0.39.7"
+      private: no
+    - name: node_v
+      prompt: "Версия node"
+      default: "18"
+      private: no
+    - name: yarn_v
+      prompt: "Версия yarn"
+      default: "1.22.22"
+      private: no
+
+  hosts: "{{ hosts }}"
+  # hosts: 192.168.1.144
+  become: yes
+  vars:
+    # ansible_become_pass: "qwerty"
+    # ansible_password: "qwerty"
+    bench_folder: "{{ bench_folder }}"
+    nvm_v: "{{ nvm_v }}"
+    node_v: "{{ node_v }}"
+    yarn_v: "{{ yarn_v }}"
+  tasks:
+    - name: Сведения о системе
+      include_tasks: ubuntu/tasks/system_info.yaml
+    - name: Добавить запись в /etc/sysctl.conf
+      include_tasks: ubuntu/tasks/add_sysctl_overcommit_memory.yaml
+    - name: Обновить и установить пакеты
+      include_tasks: ubuntu/tasks/upgrate_packages.yaml
+    - name: Установить Git
+      include_tasks: ubuntu/tasks/install_git.yaml
+    - name: Установить python3 и его компоненты
+      include_tasks: ubuntu/tasks/install_python.yaml
+    - name: Установить redis
+      include_tasks: ubuntu/tasks/install_redis.yaml
+    - name: Установить необходимые пакеты для frappe
+      include_tasks: ubuntu/tasks/install_packages_for_frappe.yaml
+    - name: Установить nvm
+      include_tasks: ubuntu/tasks/install_nvm.yaml
+    - name: Установить node
+      include_tasks: ubuntu/tasks/install_node.yaml
+    - name: Установить yarn
+      include_tasks: ubuntu/tasks/install_yarn.yaml
+    - name: Установить bench
+      include_tasks: ubuntu/tasks/install_frappe_bench.yaml
+    - name:  Инициализация потрохов frappe bench init(долгий процесс)
+      include_tasks: ubuntu/tasks/frappe_bench_init.yaml

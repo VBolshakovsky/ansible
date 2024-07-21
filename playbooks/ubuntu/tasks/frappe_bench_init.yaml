@@ -1,0 +1,23 @@
+- name: Проверить наличие папки bench_folder
+  become: no
+  stat:
+    path: "$HOME/{{ bench_folder }}"
+  register: bench_folder_check
+
+- name: Уведомление о проверке
+  become: no
+  debug:
+    msg: "{{ bench_folder }} уже имеется "
+  when: bench_folder_check.stat.exists
+
+- name: Инициализация потрохов frappe bench init(долгий процесс)
+  become: no
+  command: bench init {{ bench_folder }}
+  register: output
+  changed_when: false
+  when: not bench_folder_check.stat.exists
+
+- name: Вывод команды
+  debug:
+    msg: "{{ output.stdout_lines }}"
+  when: not bench_folder_check.stat.exists

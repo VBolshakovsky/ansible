@@ -1,0 +1,78 @@
+- name: Установить пакет zsh
+  apt:
+    name: zsh
+    state: present
+
+- name: Проверить наличие папки .oh-my-zsh
+  become: false
+  stat:
+    path: "$HOME/.oh-my-zsh"
+  register: zsh_check
+
+# - name: Установить oh-my-zsh для пользователя
+#   become: false
+#   shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+#   when: not zsh_check.stat.exists
+
+- name: Install Oh My Zsh
+  become: false
+  git:
+    repo: https://github.com/ohmyzsh/ohmyzsh.git
+    dest: ~/.oh-my-zsh
+    version: master
+#   when: not zsh_check.stat.exists
+
+- name: Изменить тему в файле .zshrc
+  become: false
+  lineinfile:
+    path: ~/.zshrc
+    regexp: '^ZSH_THEME='
+    line: 'ZSH_THEME="fox"'
+
+- name: Set Zsh as default shell
+  become: true
+  command: chsh -s $(which zsh)
+
+# - name: Set Zsh as default shell
+#   command: zsh
+
+
+# ---
+# - name: Install and configure Oh My Zsh
+#   hosts: all
+#   become: yes
+#   vars:
+#     zsh_users:
+#       - username1   # Replace with your actual usernames
+#       - username2
+
+#   tasks:
+#     - name: Ensure Zsh is installed
+#       package:
+#         name: zsh
+#         state: present
+
+#     - name: Install Oh My Zsh
+#       git:
+#         repo: https://github.com/ohmyzsh/ohmyzsh.git
+#         dest: "/home/{{ item }}/.oh-my-zsh"
+#         version: master
+#       loop: "{{ zsh_users }}"
+#       become: no
+#       when: ansible_user == item
+
+#     - name: Set Zsh as the default shell for users
+#       user:
+#         name: "{{ item }}"
+#         shell: /bin/zsh
+#       loop: "{{ zsh_users }}"
+
+#     - name: Copy custom .zshrc file
+#       copy:
+#         src: .zshrc  # Ensure you have a .zshrc file in the same directory as the playbook
+#         dest: "/home/{{ item }}/.zshrc"
+#         owner: "{{ item }}"
+#         group: "{{ item }}"
+#         mode: '0644'
+#       loop: "{{ zsh_users }}"
+#       become: no

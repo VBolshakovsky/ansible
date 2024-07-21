@@ -1,0 +1,13 @@
+- name: Выполнить команду lsb_release
+  command: lsb_release -a
+  register: release
+- name: Вывод информации о системе
+  debug:
+    msg: 
+      - "Сведения о системе:"
+      - "{{ release.stdout.split('\n') }}"
+  when: release.rc == 0
+- name: Обработка ошибки
+  debug:
+    msg: "Ошибка: {{ release.msg }}"
+  when: release.rc != 0

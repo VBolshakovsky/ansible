@@ -1,0 +1,72 @@
+# https://docs.ansible.com/ansible/latest/collections/community/docker/index.html
+# https://docs.portainer.io/start/install-ce
+
+- name: Проверим есть ли image
+  community.docker.docker_image_info:
+    name: portainer/portainer-ce:latest
+  register: image_facts
+
+- debug:
+    msg: "image_facts: {{ image_facts }}"
+
+- name: Проверим есть ли Portainer container
+  community.docker.docker_container_info:
+    name: portainer
+  register: container_facts
+
+- debug:
+    msg: "container_facts: {{ container_facts }}"
+
+- name: Проверим есть ли volume
+  community.docker.docker_volume_info:
+    name: portainer_data
+  register: volume_facts
+
+- debug:
+    msg: "volume_facts: {{ volume_facts }}"
+
+- name: Установка Portainer
+  block:
+    - name: Уже существует Portainer image
+      debug:
+        msg: "Уже существует Portainer image: {{ image_facts }}"
+      when: image_facts.images
+
+    - name: Portainer container уже запущен, установка не требуется
+      debug:
+        msg: "Portainer container уже запущен, установка не требуется, перейдите по ссылке https://{{ ansible_host }}:9443/"
+      when: container_facts.exists
+
+    - name: volume portainer_data уже существует
+      debug:
+        msg: "Portainer data volume already exists: {{ volume_facts }}"
+      when: volume_facts.exists
+
+    - name: Создать volume portainer_data
+      community.docker.docker_volume:
+        name: portainer_data
+      when: not volume_facts.exists
+
+    - name: Запуск Portainer
+      docker_container:
+        name: portainer
+        image: portainer/portainer-ce:latest
+        ports:
+          - "8000:8000"
+          - "9443:9443"
+        restart_policy: always
+        volumes:
+          - "/var/run/docker.sock:/var/run/docker.sock"
+          - "portainer_data:/data"
+        state: started
+      when: not container_facts.exists
+
+- name: Проверим есть ли Portainer container
+  community.docker.docker_container_info:
+    name: portainer
+  register: new_container_facts
+
+- name: Portainer container установлен и запущен
+  debug:
+    msg: "Portainer запущен, перейдите по ссылке https://{{ ansible_host }}:9443/"
+  when: new_container_facts.exists and not container_facts.exists

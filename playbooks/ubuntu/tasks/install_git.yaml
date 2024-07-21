@@ -1,0 +1,11 @@
+- name: Установить Git
+  apt:
+    name: git
+    state: present
+
+- name: Проверить версию Git
+  shell: git --version
+  register: git_version
+
+- debug:
+    msg: "Версия Git: {{ git_version.stdout }}"

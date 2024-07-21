@@ -1,0 +1,14 @@
+- name: Установить OpenSSH
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - ssh
+    - openssh-server
+
+- name: Проверить версию OpenSSH
+  shell: ssh -V
+  register: openssh_version
+
+- debug:
+    msg: "Версия OpenSSH server: {{ openssh_version.stderr_lines }}"

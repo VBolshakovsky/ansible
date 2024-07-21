@@ -1,0 +1,9 @@
+- name: Добавить SSH key
+  become: false
+  lineinfile:
+    dest: ~/.ssh/authorized_keys
+    line: "{{ ssh_key }}"
+    create: yes
+
+- name: Перезапустить ssh
+  shell: systemctl restart ssh || systemctl restart sshd

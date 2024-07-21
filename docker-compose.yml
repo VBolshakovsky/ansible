@@ -1,0 +1,10 @@
+version: "3"
+services:
+  ansible:
+    build: .
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    #command: tail -f /dev/null
+    volumes:
+      - ./playbooks:/root/playbooks
+      - ./config:/etc/ansible/

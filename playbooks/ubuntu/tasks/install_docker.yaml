@@ -1,0 +1,51 @@
+- name: Удалить все конфликтующие пакеты
+  ignore_errors: yes
+  shell: for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
+- name: Удалить пакеты Docker Engine (чистая установка)
+  ignore_errors: yes
+  become: true
+  shell: apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras -y
+
+- name: Установить зависимости
+  become: true
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - ca-certificates
+    - curl
+    - gnupg-agent
+
+- name: Добавить GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Получить имя версии 
+  shell: echo $(. /etc/os-release && echo "$VERSION_CODENAME")
+  register: release
+
+- name: Добавить docker repository в apt
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu {{ release.stdout }} stable
+    state: present
+
+- name: Установить docker и его потроха
+  apt:
+    name: "{{item}}"
+    state: latest
+    update_cache: yes
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-buildx-plugin
+    - docker-compose-plugin
+
+- name: Проверить версию Docker
+  shell: docker --version
+  register: docker_version
+
+- debug:
+    msg: "Версия Docker: {{ docker_version.stdout }}"

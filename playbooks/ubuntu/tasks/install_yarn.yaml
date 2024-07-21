@@ -1,0 +1,52 @@
+# Удалить yarn
+# sudo apt-get purge --auto-remove yarn
+
+- name: Получаем версию
+  command: yarn --version
+  register: yarn_version
+  ignore_errors: yes
+
+- name: Версия уже установленного yarn совпадает
+  become: no
+  debug:
+    msg: "yarn не установлен! уже имеется заданная версия: {{ yarn_version.stdout }}"
+  when: 
+    - yarn_version.changed and yarn_version.stdout == yarn_v
+
+- name: Версия уже установленного yarn не совпадает
+  become: no
+  debug:
+    msg: "yarn не установлен! уже имеется версия: {{ yarn_version.stdout }}"
+  when: 
+    - yarn_version.changed and yarn_version.stdout[1:] != yarn_v
+
+- name: Установка ключей для yarn репозитория
+  apt_key:
+    url: "https://dl.yarnpkg.com/debian/pubkey.gpg"
+    state: present
+  when: not yarn_version.changed
+
+- name: Скачивание yarn и обновление пакетов
+  apt_repository:
+    repo: "deb https://dl.yarnpkg.com/debian/ stable main"
+    state: present
+    update_cache: yes
+  when: not yarn_version.changed
+
+- name: Устанавливаем yarn
+  apt:
+    name: yarn
+    state: present
+  when: not yarn_version.changed
+
+- name: Получаем версию
+  command: yarn --version
+  register: new_yarn_version
+  ignore_errors: yes
+  when: not yarn_version.changed
+
+- name: Установлена версия yarn
+  become: no
+  debug:
+    msg: "Установлен yarn версии: {{ new_yarn_version.stdout }}"
+  when: not yarn_version.changed

@@ -1,0 +1,7 @@
+# ansible-playbook ~/playbooks/playbook_example.yaml
+- name: Проверка соединения
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Сведения о системе
+      include_tasks: ubuntu/tasks/test_connetion.yaml

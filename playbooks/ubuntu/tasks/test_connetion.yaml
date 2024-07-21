@@ -1,0 +1,11 @@
+
+    - name: Ping удаленной машины
+      ping:
+
+    - name: Вывод версии операционной системы
+      command: uname -a
+      register: os_version
+
+    - name: Вывод версии операционной системы
+      debug:
+        msg: "{{ os_version.stdout }}"
