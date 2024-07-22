@@ -6,6 +6,7 @@
     - xvfb
     - libfontconfig
     - wkhtmltopdf
+    - postgresql-client
 
 - name: Проверить версию pip
   shell: wkhtmltopdf --version
