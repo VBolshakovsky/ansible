@@ -16,11 +16,11 @@
       include_tasks: ubuntu/tasks/install_openssh.yaml
     - name: Добавить SSH publikkey пользователю
       vars:
-        ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDK8TubZ3IlCGiSzlRw68WI1ySB12tHWD19oRgHNxr/vhpCbKezzt5Em3kQNG2gGRC+7fudJEuajUdjkvtOYjwpO8+9I4ZhMmhTnhDiLRP6fFgw0KrK6rDgqlz12Vx7ZXy0Zk/niq2AlJI0Oc9EuTwLg0+heB7801uQrixS7Lmtp1/gHkA/yA8WYiUdGSVpOQC11UU8bm1igcR+vsUTyPYnU6uCg9PQailTUFIzpE8CFpeCGvnNnyov2wbjwJ+3AabglRi16zXTzczAo0MXOP2YeKSvJnszCzmWWS8ylwNxkGCFoi5ANm18lgXzoL/8ZaYDrZDZ8Q0GAPE+1/a8YiI8L9JU2RWk434FssErG2r+k+Q9PSiXJM9S9E3i4SR/uLRBUnoDQpZLzkZgGpKUeX+p+hwpVqGVTxVW3ZjWyRoAsH92AaRQrcu2UPuRfkP1AFxb83tW3ctY4/ANrk7L0RZvsAnS+lyREERNC++fnPL/RG1k2IT4dUae9e/fOyjmfZE="
+        ssh_key: "ssh-rsa <Example SSH Key>"
       include_tasks: ubuntu/tasks/add_sshkey_from_user.yaml
     - name: Добавить SSH publikkey пользователю root
       vars:
-        ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDK8TubZ3IlCGiSzlRw68WI1ySB12tHWD19oRgHNxr/vhpCbKezzt5Em3kQNG2gGRC+7fudJEuajUdjkvtOYjwpO8+9I4ZhMmhTnhDiLRP6fFgw0KrK6rDgqlz12Vx7ZXy0Zk/niq2AlJI0Oc9EuTwLg0+heB7801uQrixS7Lmtp1/gHkA/yA8WYiUdGSVpOQC11UU8bm1igcR+vsUTyPYnU6uCg9PQailTUFIzpE8CFpeCGvnNnyov2wbjwJ+3AabglRi16zXTzczAo0MXOP2YeKSvJnszCzmWWS8ylwNxkGCFoi5ANm18lgXzoL/8ZaYDrZDZ8Q0GAPE+1/a8YiI8L9JU2RWk434FssErG2r+k+Q9PSiXJM9S9E3i4SR/uLRBUnoDQpZLzkZgGpKUeX+p+hwpVqGVTxVW3ZjWyRoAsH92AaRQrcu2UPuRfkP1AFxb83tW3ctY4/ANrk7L0RZvsAnS+lyREERNC++fnPL/RG1k2IT4dUae9e/fOyjmfZE="
+        ssh_key: "ssh-rsa <Example SSH Key>"
       include_tasks: ubuntu/tasks/add_sshkey_from_root.yaml
     - name: Установить для root возможность входа
       include_tasks: ubuntu/tasks/set_permit_root_login.yaml
