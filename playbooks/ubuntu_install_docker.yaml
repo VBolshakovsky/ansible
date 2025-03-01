@@ -2,15 +2,20 @@
 # https://docs.docker.com/engine/install/ubuntu/
 
 # Задать пароль root на целевой машине sudo passwd root
-# ansible-playbook ~/playbooks/ubuntu_install_docker.yaml
+# ansible-playbook ~/playbooks/ubuntu_install_docker.yaml -v --ask-pass --ask-become-pass
 
 - name: Установка docker
-  hosts: 192.168.1.151
+  vars_prompt:
+    - name: host
+      prompt: "Введите host"
+      private: false
+    - name: user
+      prompt: "Введите user"
+      private: false
+  hosts: "{{ host }}"
   become: true
   vars:
-    ansible_become_pass: "qwerty"
-    ansible_password: "qwerty"
-    ansible_user: "app"
+    ansible_user: "{{ user }}"
   tasks:
     - name: Обновить и установить пакеты
       include_tasks: ubuntu/tasks/upgrate_packages.yaml

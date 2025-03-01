@@ -6,31 +6,33 @@
   vars_prompt:
     - name: hosts
       prompt: "Введите hosts"
-      private: no
+      private: false
     - name: bench_folder
       prompt: "Введите название директории frappe"
       default: "frappe-bench"
-      private: no
+      private: false
+    - name: frappe_version
+      prompt: "Введите версию frappe"
+      default: "Не указано"
+      private: false
     - name: nvm_v
       prompt: "Версия nvm"
       default: "0.39.7"
-      private: no
+      private: false
     - name: node_v
       prompt: "Версия node"
       default: "18"
-      private: no
+      private: false
     - name: yarn_v
       prompt: "Версия yarn"
       default: "1.22.22"
-      private: no
+      private: false
 
   hosts: "{{ hosts }}"
-  # hosts: 192.168.1.144
-  become: yes
+  become: true
   vars:
-    # ansible_become_pass: "qwerty"
-    # ansible_password: "qwerty"
     bench_folder: "{{ bench_folder }}"
+    frappe_version: "{{ frappe_version }}"
     nvm_v: "{{ nvm_v }}"
     node_v: "{{ node_v }}"
     yarn_v: "{{ yarn_v }}"

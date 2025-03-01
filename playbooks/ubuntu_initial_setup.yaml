@@ -1,26 +1,42 @@
 # Добавить в /etc/ansible/hosts.yaml
 # Задать пароль root на целевой машине sudo passwd root
-# ansible-playbook ~/playbooks/ubuntu_initial_setup.yaml
+# ansible-playbook ~/playbooks/ubuntu_initial_setup.yaml -v --ask-pass --ask-become-pass
 
 - name: Перовначальная настройка ubuntu
-  hosts: 192.168.1.152
+  vars_prompt:
+    - name: host
+      prompt: "Введите host"
+      private: false
+    - name: user
+      prompt: "Введите user"
+      private: false
+    - name: ssh_key_root
+      prompt: "Введите ssh_key для root"
+      private: false
+    - name: ssh_key_user
+      prompt: "Введите ssh_key для user"
+      private: false
+
+  hosts: "{{ host }}"
   become: true
   vars:
-    ansible_become_pass: "qwerty"
-    ansible_password: "qwerty"
-    ansible_user: "app"
+    ansible_user: "{{ user }}"
+    ssh_key_root: "{{ ssh_key_root }}"
+    ssh_key_user: "{{ ssh_key_user }}"
   tasks:
+    - name: Сведения о системе
+      include_tasks: ubuntu/tasks/system_info.yaml
     - name: Обновить и установить пакеты
       include_tasks: ubuntu/tasks/upgrate_packages.yaml
     - name: Установить OpenSSH
       include_tasks: ubuntu/tasks/install_openssh.yaml
     - name: Добавить SSH publikkey пользователю
       vars:
-        ssh_key: "ssh-rsa <Example SSH Key>"
+        ssh_key: "ssh-rsa {{ ssh_key_user }}"
       include_tasks: ubuntu/tasks/add_sshkey_from_user.yaml
     - name: Добавить SSH publikkey пользователю root
       vars:
-        ssh_key: "ssh-rsa <Example SSH Key>"
+        ssh_key: "ssh-rsa {{ ssh_key_root }}"
       include_tasks: ubuntu/tasks/add_sshkey_from_root.yaml
     - name: Установить для root возможность входа
       include_tasks: ubuntu/tasks/set_permit_root_login.yaml
